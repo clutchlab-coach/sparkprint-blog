@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Savings Challenge Calculator — SparkPrint Studio</title>
+<meta name="description" content="Work out a 52-week, 26-week or 12-month savings challenge week by week — then print your plan. A free tool from SparkPrint Studio, by Sprout &amp; Season.">
+<style>
+/* SparkPrint Studio — The Printable Blog
+   Warm cream & terracotta, simple and self-contained.
+   (Same palette/type as the blog's shared style.css, inlined so this
+   tool page works fully offline as a single file.) */
+
+:root {
+  --cream: #fbf5ec;
+  --paper: #fffdf8;
+  --ink: #3e2f25;
+  --muted: #7a6656;
+  --terra: #bc5837;
+  --terra-dark: #9c4527;
+  --sand: #f0e3d0;
+  --line: #e5d5bf;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.65;
+}
+
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+header.site {
+  background: var(--terra);
+  color: #fff7ee;
+  text-align: center;
+  padding: 40px 20px 30px;
+}
+
+header.site h1 {
+  margin: 0 0 6px;
+  font-size: 2rem;
+  line-height: 1.25;
+}
+
+header.site h1 a {
+  color: #fff7ee;
+  text-decoration: none;
+}
+
+header.site .byline {
+  margin: 0;
+  font-style: italic;
+  color: #f6ddcb;
+  font-size: 1rem;
+}
+
+main { padding: 32px 0 8px; }
+
+h2 {
+  color: var(--terra-dark);
+  font-size: 1.45rem;
+  line-height: 1.3;
+  margin: 34px 0 10px;
+}
+
+article.post h1 {
+  font-size: 1.9rem;
+  line-height: 1.25;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+
+.post-byline {
+  font-style: italic;
+  color: var(--muted);
+  margin: 0 0 24px;
+}
+
+a { color: var(--terra-dark); }
+a:hover { color: var(--terra); }
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 22px 24px;
+  margin: 0 0 20px;
+  box-shadow: 0 2px 6px rgba(62, 47, 37, 0.06);
+}
+
+.card h2 { margin-top: 0; }
+
+.sale-note {
+  background: var(--sand);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.98rem;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 32px 0;
+}
+
+footer.site {
+  border-top: 1px solid var(--line);
+  margin-top: 40px;
+  padding: 24px 20px 36px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+footer.site p { margin: 4px 0; }
+
+/* ——— Savings calculator tool ——— */
+
+fieldset {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin: 0 0 18px;
+  padding: 14px 16px 8px;
+  background: var(--paper);
+}
+
+legend {
+  font-weight: bold;
+  color: var(--terra-dark);
+  padding: 0 6px;
+}
+
+label.choice {
+  display: block;
+  padding: 7px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+label.choice:hover { background: var(--cream); }
+label.choice input { margin-right: 8px; }
+label.choice .total { font-weight: bold; color: var(--terra-dark); }
+
+.custom-fields {
+  margin: 4px 0 10px 30px;
+  display: none;
+}
+
+.custom-fields.open { display: block; }
+
+.custom-fields label {
+  display: block;
+  margin: 8px 0 2px;
+  font-size: 0.98rem;
+}
+
+input[type="number"],
+input[type="date"] {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 10px;
+  max-width: 220px;
+}
+
+.btn {
+  display: inline-block;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff7ee;
+  background: var(--terra);
+  border: none;
+  border-radius: 8px;
+  padding: 11px 22px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:hover { background: var(--terra-dark); color: #fff7ee; }
+
+.result-total {
+  background: var(--sand);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-size: 1.12rem;
+  text-align: center;
+  margin: 0 0 18px;
+}
+
+.result-total .big {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: var(--terra-dark);
+  line-height: 1.3;
+}
+
+table.plan {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.98rem;
+  background: var(--paper);
+}
+
+table.plan th, table.plan td {
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  text-align: left;
+}
+
+table.plan th {
+  background: var(--sand);
+  color: var(--terra-dark);
+}
+
+table.plan td.num, table.plan th.num { text-align: right; }
+table.plan tbody tr:nth-child(even) { background: var(--cream); }
+table.plan tfoot td { font-weight: bold; background: var(--sand); }
+
+.cta { text-align: center; }
+.cta .btn { margin: 6px 4px 2px; }
+.cta .btn.secondary {
+  background: var(--paper);
+  color: var(--terra-dark);
+  border: 1px solid var(--terra);
+}
+.cta .btn.secondary:hover { background: var(--sand); }
+
+@media (max-width: 560px) {
+  body { font-size: 17px; }
+  header.site { padding: 30px 16px 24px; }
+  header.site h1 { font-size: 1.6rem; }
+  article.post h1 { font-size: 1.55rem; }
+  .card { padding: 18px; }
+  .custom-fields { margin-left: 8px; }
+}
+
+/* ——— Print: just the plan, clean on paper ——— */
+@media print {
+  body { background: #fff; font-size: 12pt; }
+  header.site, footer.site, .back, .no-print { display: none !important; }
+  main { padding: 0; }
+  .card { border: none; box-shadow: none; padding: 0; }
+  table.plan th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  table.plan tfoot td { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .result-total { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: #000; text-decoration: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <h1><a href="index.html">SparkPrint Studio — The Printable Blog</a></h1>
+  <p class="byline">by Sprout &amp; Season</p>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <a class="back" href="index.html">&larr; All posts</a>
+
+    <article class="post">
+      <h1>Savings Challenge Calculator</h1>
+      <p class="post-byline">A free little tool by Sprout &amp; Season</p>
+
+      <p>A savings challenge turns "I should save more" into a simple plan: put away a small amount on a schedule, watch it grow, and finish with a satisfying lump sum. Pick a challenge below, choose the day you want to start, and this calculator builds your whole plan — every deposit, every date, and exactly what you'll have at the end. Print it out and tick off each step as you go.</p>
+
+      <div class="card no-print">
+        <h2>Build your plan</h2>
+        <form id="calc-form">
+          <fieldset>
+            <legend>1. Pick your challenge</legend>
+
+            <label class="choice">
+              <input type="radio" name="challenge" value="w52" checked>
+              <strong>52-week challenge</strong> — save $1 in week 1, $2 in week 2, and so on, up to $52 in week 52.
+              <span class="total">Total: $1,378</span>
+            </label>
+
+            <label class="choice">
+              <input type="radio" name="challenge" value="w26">
+              <strong>26-week challenge</strong> — the half-year version: save $2 in week 1, $4 in week 2, growing by $2 each week up to $52 in week 26.
+              <span class="total">Total: $702</span>
+            </label>
+
+            <label class="choice">
+              <input type="radio" name="challenge" value="m12">
+              <strong>12-month challenge</strong> — one deposit a month: $25 in month 1, $50 in month 2, growing by $25 each month up to $300 in month 12.
+              <span class="total">Total: $1,950</span>
+            </label>
+
+            <label class="choice">
+              <input type="radio" name="challenge" value="flat">
+              <strong>My own flat challenge</strong> — the same amount every week, for as many weeks as I choose.
+            </label>
+
+            <div class="custom-fields" id="custom-fields">
+              <label for="flat-amount">Amount to save each week ($)</label>
+              <input type="number" id="flat-amount" min="0.01" step="0.01" value="20">
+              <label for="flat-weeks">Number of weeks</label>
+              <input type="number" id="flat-weeks" min="1" max="260" step="1" value="26">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>2. Pick your start date</legend>
+            <label for="start-date">First deposit on</label><br>
+            <input type="date" id="start-date">
+            <p style="margin:8px 0 4px; color: var(--muted); font-size: 0.95rem;">We've set it to next Monday — a fresh week is a lovely time to start — but any day that suits you works.</p>
+          </fieldset>
+        </form>
+      </div>
+
+      <div id="results">
+        <p class="result-total" id="result-total"></p>
+
+        <table class="plan" id="plan-table">
+          <thead>
+            <tr>
+              <th id="th-period">Week</th>
+              <th>Date</th>
+              <th class="num">Save</th>
+              <th class="num">Total saved</th>
+            </tr>
+          </thead>
+          <tbody id="plan-body"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">Grand total at the end</td>
+              <td class="num" colspan="2" id="plan-grand-total"></td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <p class="no-print" style="text-align:center; margin-top:20px;">
+          <button type="button" class="btn" id="print-btn">Print my plan</button>
+        </p>
+      </div>
+
+      <hr>
+
+      <div class="card cta">
+        <h2>Want it on paper?</h2>
+        <p>Our printable <strong>Savings Challenge Planner</strong> tracks this same challenge on paper — a page to colour in or tick off each deposit, somewhere satisfying to keep by the fridge. Prefer everything in one binder? The planner bundle includes the savings challenge plus monthly budgets, bill trackers and more.</p>
+        <a class="btn" href="https://www.etsy.com/listing/4615177938">Get the Savings Challenge Planner</a>
+        <a class="btn secondary" href="https://www.etsy.com/listing/4615171148">See the All-Planners Bundle</a>
+      </div>
+
+    </article>
+
+  </div>
+</main>
+
+<footer class="site">
+  <p>Visit our shop: <a href="https://www.etsy.com/shop/SparkPrintStudioCo">SparkPrint Studio Co on Etsy</a></p>
+  <p>&copy; Sprout &amp; Season</p>
+</footer>
+
+<script>
+"use strict";
+
+/* PURE-LOGIC-START */
+
+/*
+ * Challenge maths — all amounts handled in whole cents so totals are exact.
+ *
+ * Preset totals, verified:
+ *  - 52-week growing:  $1 + $2 + ... + $52  = 52*53/2        = 1378  -> $1,378
+ *  - 26-week growing:  $2 + $4 + ... + $52  = 2*(26*27/2)    = 702   -> $702
+ *    (the 52-week challenge compressed into half a year by doubling each
+ *     weekly amount — $2 steps instead of $1 steps)
+ *  - 12-month growing: $25 + $50 + ... + $300 = 25*(12*13/2) = 1950  -> $1,950
+ *    (one deposit per month, growing by $25 each month)
+ */
+var PRESETS = {
+  w52: { periods: 52, periodLabel: "Week",  stepDays: 7, stepMonths: 0,
+         amountCents: function (n) { return n * 100; } },
+  w26: { periods: 26, periodLabel: "Week",  stepDays: 7, stepMonths: 0,
+         amountCents: function (n) { return 2 * n * 100; } },
+  m12: { periods: 12, periodLabel: "Month", stepDays: 0, stepMonths: 1,
+         amountCents: function (n) { return 25 * n * 100; } }
+};
+
+function addMonthsClamped(date, months) {
+  var d = new Date(date.getFullYear(), date.getMonth() + months, 1);
+  var lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(date.getDate(), lastDay));
+  return d;
+}
+
+/* Build the schedule rows for a preset (or a flat plan when presetKey is
+ * "flat"): returns [{n, date, amountCents, runningCents}, ...] */
+function buildSchedule(presetKey, startDate, flatAmountCents, flatWeeks) {
+  var periods, label, stepDays, stepMonths, amountFn;
+  if (presetKey === "flat") {
+    periods = flatWeeks; label = "Week"; stepDays = 7; stepMonths = 0;
+    amountFn = function () { return flatAmountCents; };
+  } else {
+    var p = PRESETS[presetKey];
+    periods = p.periods; label = p.periodLabel;
+    stepDays = p.stepDays; stepMonths = p.stepMonths;
+    amountFn = p.amountCents;
+  }
+  var rows = [], running = 0, date = new Date(startDate.getTime());
+  for (var n = 1; n <= periods; n++) {
+    var amt = amountFn(n);
+    running += amt;
+    rows.push({ n: n, label: label, date: new Date(date.getTime()),
+                amountCents: amt, runningCents: running });
+    if (stepMonths) { date = addMonthsClamped(date, stepMonths); }
+    else { date.setDate(date.getDate() + stepDays); }
+  }
+  return rows;
+}
+
+function totalCents(rows) {
+  return rows.length ? rows[rows.length - 1].runningCents : 0;
+}
+
+/* PURE-LOGIC-END */
+
+function fmtMoney(cents) {
+  var neg = cents < 0; cents = Math.abs(cents);
+  var dollars = Math.floor(cents / 100), rem = cents % 100;
+  var s = dollars.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (rem) { s += "." + (rem < 10 ? "0" : "") + rem; }
+  return (neg ? "-$" : "$") + s;
+}
+
+function fmtDate(d) {
+  return d.toLocaleDateString("en-US",
+    { weekday: "short", month: "short", day: "numeric", year: "numeric" });
+}
+
+/* Default start date: next Monday from today (today itself if it's Monday). */
+function nextMonday(from) {
+  var d = new Date(from.getFullYear(), from.getMonth(), from.getDate());
+  var add = (8 - d.getDay()) % 7; /* Mon=1 ... Sun=0 -> days until Monday */
+  d.setDate(d.getDate() + add);
+  return d;
+}
+
+function toISODate(d) {
+  var m = ("0" + (d.getMonth() + 1)).slice(-2);
+  var day = ("0" + d.getDate()).slice(-2);
+  return d.getFullYear() + "-" + m + "-" + day;
+}
+
+function render() {
+  var key = document.querySelector('input[name="challenge"]:checked').value;
+  document.getElementById("custom-fields").className =
+    "custom-fields" + (key === "flat" ? " open" : "");
+
+  var dateVal = document.getElementById("start-date").value;
+  var start = dateVal ? new Date(dateVal + "T00:00:00") : nextMonday(new Date());
+
+  var flatAmountCents = Math.round(
+    (parseFloat(document.getElementById("flat-amount").value) || 0) * 100);
+  var flatWeeks = parseInt(document.getElementById("flat-weeks").value, 10) || 0;
+  if (key === "flat") {
+    if (flatAmountCents < 1) { flatAmountCents = 1; }
+    if (flatWeeks < 1) { flatWeeks = 1; }
+    if (flatWeeks > 260) { flatWeeks = 260; }
+  }
+
+  var rows = buildSchedule(key, start, flatAmountCents, flatWeeks);
+  var total = totalCents(rows);
+  var last = rows[rows.length - 1];
+
+  document.getElementById("th-period").textContent =
+    rows.length ? rows[0].label : "Week";
+
+  var names = { w52: "52-week challenge", w26: "26-week challenge",
+                m12: "12-month challenge", flat: "flat savings challenge" };
+  document.getElementById("result-total").innerHTML =
+    "Saving with the " + names[key] + ", you'll have" +
+    '<span class="big">' + fmtMoney(total) + "</span>" +
+    "saved by " + fmtDate(last.date) + ".";
+
+  var html = "";
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    html += "<tr><td>" + r.label + " " + r.n + "</td><td>" + fmtDate(r.date) +
+            '</td><td class="num">' + fmtMoney(r.amountCents) +
+            '</td><td class="num">' + fmtMoney(r.runningCents) +
+            "</td></tr>";
+  }
+  document.getElementById("plan-body").innerHTML = html;
+  document.getElementById("plan-grand-total").textContent = fmtMoney(total);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  var startInput = document.getElementById("start-date");
+  startInput.value = toISODate(nextMonday(new Date()));
+  document.getElementById("calc-form").addEventListener("change", render);
+  document.getElementById("calc-form").addEventListener("input", render);
+  document.getElementById("print-btn").addEventListener("click", function () {
+    window.print();
+  });
+  render();
+});
+</script>
+
+</body>
+</html>
