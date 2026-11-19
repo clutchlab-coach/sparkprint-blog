@@ -30,7 +30,7 @@ body {
 }
 
 header.site {
-  background: var(--terra);
+  background: var(--cream);
   color: #fff7ee;
   text-align: center;
   padding: 40px 20px 30px;
@@ -48,9 +48,9 @@ header.site h1 a {
 }
 
 header.site .byline {
-  margin: 0;
+  margin: 6px 0 0;
   font-style: italic;
-  color: #f6ddcb;
+  color: var(--terra-dark);
   font-size: 1rem;
 }
 
@@ -143,3 +143,6 @@ footer.site p { margin: 4px 0; }
   article.post h1 { font-size: 1.55rem; }
   .card { padding: 18px; }
 }
+
+.brand-logo { width: min(380px, 85%); height: auto; }
+.hero-banner { width: 100%; height: auto; border-radius: 14px; margin: 0 0 1.4em; }
